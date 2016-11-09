@@ -22,7 +22,7 @@ def weight_variable(shape):
 
 
 def bias_variable(shape):
-	initial = tf.constant(0.1, shape=shape)
+	initial = tf.constant(0.5, shape=shape)
 	return tf.Variable(initial)
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
@@ -32,22 +32,22 @@ sess = tf.InteractiveSession()
 x = tf.placeholder(tf.float32, [None, 784])
 x_image = tf.reshape(x, [-1, 28, 28, 1])
 
-W_conv1 = weight_variable([5, 5, 1, 32])
-b_conv1 = bias_variable([32])
+W_conv1 = weight_variable([5, 5, 1, 96])
+b_conv1 = bias_variable([96])
 h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 h_pool1 = max_pool_2x2(h_conv1)
 
 
 # Segunda camada convolucional
-W_conv2 = weight_variable([5, 5, 32, 64])
-b_conv2 = bias_variable([64])
+W_conv2 = weight_variable([3, 3, 96, 256])
+b_conv2 = bias_variable([256])
 h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
 h_pool2 = max_pool_2x2(h_conv2)
 
 # Camada densamente conectada
-W_fc1 = weight_variable([7 * 7 * 64, 1024])
+W_fc1 = weight_variable([7 * 7 * 256, 1024])
 b_fc1 = bias_variable([1024])
-h_pool2_flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64])
+h_pool2_flat = tf.reshape(h_pool2, [-1, 7 * 7 * 256])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
 
@@ -83,7 +83,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 plt.axis([0, 20000, 0, 1])
 plt.ion()
 
-for i in range(20000):
+for i in range(200000):
   batch_xs, batch_ys = mnist.train.next_batch(50)
   if i % 100 == 0:
     train_accuracy = accuracy.eval(feed_dict={x: batch_xs, y_: batch_ys, keep_prob: 0.5})
